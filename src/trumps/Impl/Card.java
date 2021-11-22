@@ -17,13 +17,13 @@ public class Card {
     public Card(int id, Player owner) throws NotExistentValueException {
         this.id = id;
         this.owner = owner;
-        this.Category1 = random_number();
-        this.Category2 = random_number();
-        this.Category3 = random_number();
-        this.Category4 = random_number();
+        this.Category1 = randomNumber();
+        this.Category2 = randomNumber();
+        this.Category3 = randomNumber();
+        this.Category4 = randomNumber();
     }
 
-    private int random_number() throws NotExistentValueException {
+    private int randomNumber() throws NotExistentValueException {
         int random = 1;
         Random r = new Random();
         random = r.nextInt(10);
@@ -33,11 +33,9 @@ public class Card {
         return random;
     }
 
-    public int[] get_secure_list(){
+    public int[] getSecureList(){
         return new int[]{this.Category1, this.Category2, this.Category3, this.Category4};
     }
-
-    public Player getOwner() {return owner;}
 
     public int getCategory(int category) throws CategoryDoesNotExistException {
         switch (category){

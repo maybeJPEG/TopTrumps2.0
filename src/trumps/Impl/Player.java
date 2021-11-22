@@ -13,7 +13,7 @@ public class Player {
     public Player(String name) throws NotExistentValueException, NoCardsException {
         this.name = name;
         this.distributeCards();
-        this.update_actual_card();
+        this.updateActualCard();
     }
 
     private void distributeCards() throws NotExistentValueException {
@@ -28,7 +28,7 @@ public class Player {
     }
 
 
-    private void update_actual_card() throws NoCardsException {
+    private void updateActualCard() throws NoCardsException {
         if (this.cards.get(0) == null)
             throw new NoCardsException("No cards");
         this.actual_card = this.cards.get(0);

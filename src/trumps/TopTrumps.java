@@ -1,6 +1,9 @@
 package trumps;
 
 import trumps.Exceptions.*;
+import trumps.Impl.TopTrumpsImpl;
+
+import java.util.spi.ToolProvider;
 
 /**
  * Rules:
@@ -30,7 +33,7 @@ public interface TopTrumps {
      * @throws StatusException if the Cards are already distributed.
      * @throws NoCardsException
      */
-    int start() throws GameExceptions, StatusException, WrongNameException, NotExistentPlayerException;
+    int start() throws GameExceptions, StatusException, WrongNameException, NotExistentPlayerException, StartNotAllowedException;
 
     /**
      * The active_player, which is the player that is allowed to make a move in the game, gets the first
@@ -69,4 +72,5 @@ public interface TopTrumps {
      */
     void giveUp(int player);
 
+    public int getActive_Player();
 }
