@@ -45,7 +45,7 @@ public class TopTrumpsImpl implements TopTrumps {
     }
 
     @Override
-    public int[] getFirstCard(int player) throws GameExceptions, StatusException, MatchException, NotYourTurnException, NotExistentPlayerException {
+    public int[] getFirstCard(int player) throws StatusException, NotExistentPlayerException {
         if(active_player == null) {
             throw new StatusException("First call method start(), no Players determined yet!");
         }
@@ -69,7 +69,7 @@ public class TopTrumpsImpl implements TopTrumps {
     }
 
     @Override
-    public int compareCategory(int category, int player) throws GameExceptions, StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException {
+    public int compareCategory(int category, int player) throws StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException {
         if(active_player == null) {
             throw new StatusException("First call method start(), no Players determined yet!");
         }
