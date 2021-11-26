@@ -1,13 +1,12 @@
 package trumps.UI;
 
-import java.awt.desktop.ScreenSleepEvent;
 import java.io.*;
 import java.util.*;
 
 public class TopTrumpsUI {
     public static final String CONNECT = "connect";
     public static final String OPEN = "open";
-    public static final String Exit = "kill";
+    public static final String Exit = "exit";
 
     private PrintStream standardOut = System.out;
     private PrintStream standardError = System.err;
@@ -17,7 +16,7 @@ public class TopTrumpsUI {
     public static void main(String[] args) throws IOException {
         PrintStream os = System.out;
 
-        os.println("TopTrumps, the virtual luck version.");
+        os.println("TopTrumps, the Virtual Luck Version. Starting now...");
         TopTrumpsUI userCmd = new TopTrumpsUI(os, System.in);
 
         userCmd.printUsage();
@@ -37,10 +36,10 @@ public class TopTrumpsUI {
         b.append("valid commands:");
         b.append("\n");
         b.append(CONNECT);
-        b.append(".. connect to remote engine");
+        b.append(".. connect to remote engine. Not yet implemented.");
         b.append("\n");
         b.append(OPEN);
-        b.append(".. open socket");
+        b.append(".. open socket. Not yet implemented.");
         b.append("\n");
         b.append(Exit);
         b.append(".. exit");
@@ -176,7 +175,7 @@ public class TopTrumpsUI {
     }*/
 
     public void exitGame(String parameterString) throws InterruptedException {
-        System.out.println("Exiting the Game");
+        System.out.println("Exiting the Game! Goodbye");
         Thread.sleep(3000);
         System.exit(1);
     }
