@@ -1,17 +1,25 @@
 package trumps.UI;
 
+import trumps.Exceptions.*;
+import trumps.Impl.TopTrumpsImpl;
+
 import java.io.*;
 import java.util.*;
 
 public class TopTrumpsUI {
-    public static final String CONNECT = "connect";
-    public static final String OPEN = "open";
-    public static final String Exit = "exit";
+    public static final String EXIT = "exit";
+    public static final String DECKS = "decks";
+    public static final String CARD = "card";
 
     private PrintStream standardOut = System.out;
     private PrintStream standardError = System.err;
 
     private BufferedReader userInput;
+    private TopTrumpsImpl tt;
+
+    public TopTrumpsImpl getTopTrumps() throws NotExistentValueException, NoCardsException {
+        return new TopTrumpsImpl();
+    }
 
     public static void main(String[] args) throws IOException {
         PrintStream os = System.out;
@@ -35,16 +43,17 @@ public class TopTrumpsUI {
         b.append("\n");
         b.append("valid commands:");
         b.append("\n");
-        b.append(CONNECT);
-        b.append(".. connect to remote engine. Not yet implemented.");
-        b.append("\n");
-        b.append(OPEN);
-        b.append(".. open socket. Not yet implemented.");
-        b.append("\n");
-        b.append(Exit);
+        b.append(EXIT);
         b.append(".. exit");
+        b.append("\n");
+        b.append(DECKS);
+        b.append(".. will distribute the decks.");
+        b.append("\n");
+        b.append(CARD);
+        b.append(".. will show your first Card of the deck.");
+        b.append("\n");
 
-        this.standardOut.println(b.toString());
+        this.standardOut.println(b);
     }
 
     public void printUsage(String cmdString, String comment) {
@@ -54,25 +63,12 @@ public class TopTrumpsUI {
         out.println("malformed command: " + comment);
         out.println("use:");
         switch(cmdString) {
-            case CONNECT:
-                out.println(CONNECT + " [IP/DNS-Name_remoteHost] remotePort localEngineName");
-                out.println("omitting remote host: localhost is assumed");
-                out.println("example: " + CONNECT + " localhost 7070 Bob");
-                out.println("example: " + CONNECT + " 7070 Bob");
-                out.println("in both cases try to connect to localhost:7070 and let engine Bob handle " +
-                        "connection when established");
-                break;
-            case OPEN:
-                out.println(OPEN + " localPort engineName");
-                out.println("example: " + OPEN + " 7070 Alice");
-                out.println("opens a server socket #7070 and let engine Alice handle connection when established");
-                break;
-            case Exit:
-                out.println(Exit + " channel name");
-                out.println("example: " + Exit + " localhost:7070");
+            case EXIT:
+                out.println(EXIT + " channel name");
+                out.println("example: " + EXIT + " localhost:7070");
                 out.println("kills channel named localhost:7070");
                 out.println("channel names are produced by using list");
-                out.println(Exit + " all .. kills all open connections");
+                out.println(EXIT + " all .. kills all open connections");
                 break;
         }
     }
@@ -107,12 +103,12 @@ public class TopTrumpsUI {
                 parameterString = parameterString.trim();
 
                 // start command loop
-                switch(commandString) {/*
-                    case CONNECT:
-                        this.doConnect(parameterString); break;
-                    case OPEN:
-                        this.doOpen(parameterString); break;*/
-                    case Exit:
+                switch(commandString) {
+                    case DECKS:
+                        this.distributingCards(); break;
+                    case CARD:
+                        this.getFirstCard(parameterString); break;
+                    case EXIT:
                         this.exitGame("all");
                         again = false; break; // end loop
 
@@ -124,6 +120,20 @@ public class TopTrumpsUI {
             } catch (IOException | InterruptedException ex) {
                 this.standardOut.println("cannot read from input stream");
                 System.exit(0);
+            } catch (StatusException e) {
+                e.printStackTrace();
+            } catch (GameExceptions gameExceptions) {
+                gameExceptions.printStackTrace();
+            } catch (WrongNameException e) {
+                e.printStackTrace();
+            } catch (NotExistentPlayerException e) {
+                e.printStackTrace();
+            } catch (NoCardsException e) {
+                e.printStackTrace();
+            } catch (NotExistentValueException e) {
+                e.printStackTrace();
+            } catch (StartNotAllowedException e) {
+                e.printStackTrace();
             }
 
             if(rememberCommand) {
@@ -131,48 +141,33 @@ public class TopTrumpsUI {
             }
         }
     }
-    /*public void doConnect(String parameterString){
-        StringTokenizer st = new StringTokenizer(parameterString);
+
+    private void distributingCards() throws StatusException, GameExceptions, WrongNameException, NotExistentPlayerException, StartNotAllowedException, NoCardsException, NotExistentValueException {
+        this.tt = new TopTrumpsImpl();
+        tt.start();
+    }
+    public void getFirstCard(String Player) throws StatusException, NotExistentPlayerException {
+        StringTokenizer st = new StringTokenizer(Player);
 
         try {
-            String remoteHost = st.nextToken();
-            String remotePortString = st.nextToken();
-            String engineName = null;
-            if(!st.hasMoreTokens()) {
-                // no remote host set - shift
-                engineName = remotePortString;
-                remotePortString = remoteHost;
-                remoteHost = "localhost";
-            } else {
-                engineName = st.nextToken();
-            }
-            int remotePort = Integer.parseInt(remotePortString);
+            String playerString = st.nextToken();
 
-            String name =  remoteHost + ":" + remotePortString;
-
-            this.startTCPStream(name,  new TCPStream(remotePort, false, name), engineName);
+            int playerNumber = Integer.parseInt(playerString);
+            int[] cardCategories = this.tt.getFirstCard(playerNumber);
+            if(playerNumber == 1)
+                System.out.println("Alice's card: first value: " + cardCategories[0] + " second value: "+ cardCategories[1]+" third value: "+cardCategories[2]+" forth value: "+cardCategories[3]);
+            else
+                System.out.println("Bob's Card: first value: " + cardCategories[0] + " second value: "+ cardCategories[1]+" third value: "+cardCategories[2]+" forth value: "+cardCategories[3]);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (StatusException e) {
+            e.printStackTrace();
+        } catch (NotExistentPlayerException e) {
+            System.out.println("Player doesn't exist!");
+        } catch (NoSuchElementException e){
+            System.out.println("Please enter Player Number. Correct input: 'Card 1' or 'Card 2'");
         }
-        catch(RuntimeException re) {
-            this.printUsage(CONNECT, re.getLocalizedMessage());
-        }
-    }*/
-/*
-    public void doOpen(String parameterString) {
-        StringTokenizer st = new StringTokenizer(parameterString);
-
-        try {
-            String portString = st.nextToken();
-            String engineName = st.nextToken();
-
-            int port = Integer.parseInt(portString);
-            String name =  "server:" + port;
-
-            this.startTCPStream(name,  new TCPStream(port, true, name), engineName);
-        }
-        catch(RuntimeException re) {
-            this.printUsage(OPEN, re.getLocalizedMessage());
-        }
-    }*/
+    }
 
     public void exitGame(String parameterString) throws InterruptedException {
         System.out.println("Exiting the Game! Goodbye");
