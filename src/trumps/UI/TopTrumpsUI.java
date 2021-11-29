@@ -9,7 +9,9 @@ import java.util.*;
 public class TopTrumpsUI {
     public static final String EXIT = "exit";
     public static final String DECKS = "decks";
+    public static final String WHO = "who";
     public static final String CARD = "card";
+    public static final String COMPARE = "compare";
 
     private PrintStream standardOut = System.out;
     private PrintStream standardError = System.err;
@@ -47,11 +49,18 @@ public class TopTrumpsUI {
         b.append(".. exit");
         b.append("\n");
         b.append(DECKS);
-        b.append(".. will distribute the decks.");
+        b.append(".. will distribute the decks. Start the Game with this command.");
+        b.append("\n");
+        b.append(WHO);
+        b.append(".. will tell you who's turn it is.");
         b.append("\n");
         b.append(CARD);
-        b.append(".. will show your first Card of the deck.");
+        b.append(".. will show your first Card of the deck. Type in Card 1 to see Alice's Card or Card 2 if you want to see Bob's Card.");
         b.append("\n");
+        b.append(COMPARE);
+        b.append(".. choose your Value and compare it to your opponent.");
+        b.append("\n");
+
 
         this.standardOut.println(b);
     }
@@ -104,10 +113,14 @@ public class TopTrumpsUI {
 
                 // start command loop
                 switch(commandString) {
+                    case WHO:
+                        this.getActivePlayer(); break;
                     case DECKS:
                         this.distributingCards(); break;
                     case CARD:
                         this.getFirstCard(parameterString); break;
+                    case COMPARE:
+                        this.compareCategory(parameterString, parameterString); break;
                     case EXIT:
                         this.exitGame("all");
                         again = false; break; // end loop
@@ -142,11 +155,31 @@ public class TopTrumpsUI {
         }
     }
 
+
     private void distributingCards() throws StatusException, GameExceptions, WrongNameException, NotExistentPlayerException, StartNotAllowedException, NoCardsException, NotExistentValueException {
         this.tt = new TopTrumpsImpl();
         tt.start();
     }
-    public void getFirstCard(String Player) throws StatusException, NotExistentPlayerException {
+
+    private void getActivePlayer() throws NotExistentPlayerException {
+
+        try {
+            String PlayerName = null;
+            int Player = this.tt.getActive_Player();
+            if (Player == 1) PlayerName = "Alice";
+            if (Player == 2) PlayerName = "Bob";
+
+            System.out.println(PlayerName + " is next.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+      /* catch (NotExistentPlayerException e) {
+            e.printStackTrace();
+            System.out.println("Exit the Game and restart. No Player could be determined.");
+        }*/
+    }
+
+    private void getFirstCard(String Player) throws StatusException, NotExistentPlayerException {
         StringTokenizer st = new StringTokenizer(Player);
 
         try {
@@ -155,9 +188,9 @@ public class TopTrumpsUI {
             int playerNumber = Integer.parseInt(playerString);
             int[] cardCategories = this.tt.getFirstCard(playerNumber);
             if(playerNumber == 1)
-                System.out.println("Alice's card: first value: " + cardCategories[0] + " second value: "+ cardCategories[1]+" third value: "+cardCategories[2]+" forth value: "+cardCategories[3]);
-            else
-                System.out.println("Bob's Card: first value: " + cardCategories[0] + " second value: "+ cardCategories[1]+" third value: "+cardCategories[2]+" forth value: "+cardCategories[3]);
+                System.out.println("Alice's card: first value: " + cardCategories[0] + ", second value: "+ cardCategories[1]+", third value: "+cardCategories[2]+", forth value: "+cardCategories[3]);
+            if(playerNumber == 2)
+                System.out.println("Bob's Card: first value: " + cardCategories[0] + ", second value: "+ cardCategories[1]+", third value: "+cardCategories[2]+", forth value: "+cardCategories[3]);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         } catch (StatusException e) {
@@ -168,8 +201,33 @@ public class TopTrumpsUI {
             System.out.println("Please enter Player Number. Correct input: 'Card 1' or 'Card 2'");
         }
     }
+    public void compareCategory(String Value, String Player){
+        StringTokenizer st = new StringTokenizer(Value, Player);
+        try {
+            String stringValue = st.nextToken();
+            String stringPlayer = st.nextToken();
 
-    public void exitGame(String parameterString) throws InterruptedException {
+            int Category = Integer.parseInt(stringValue);
+            int playerNumber = Integer.parseInt(stringPlayer);
+            int winner = this.tt.compareCategory(Category, playerNumber);
+            if(winner == 1){
+                System.out.println("Alice won! You are next. Draw a card and choose the next Value you want to play.");
+            } else System.out.println("Bob won! You are next. Draw a card and choose the next Value you want to play.");
+        } catch (StatusException e) {
+            e.printStackTrace();
+        } catch (NotExistentPlayerException e) {
+            e.printStackTrace();
+        } catch (NotYourTurnException e) {
+            e.printStackTrace();
+        } catch (CategoryDoesNotExistException e) {
+            e.printStackTrace();
+        } catch (DrawException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void exitGame(String parameterString) throws InterruptedException {
         System.out.println("Exiting the Game! Goodbye");
         Thread.sleep(3000);
         System.exit(1);
