@@ -216,13 +216,13 @@ public class TopTrumpsUI {
         } catch (StatusException e) {
             e.printStackTrace();
         } catch (NotExistentPlayerException e) {
-            e.printStackTrace();
+            System.out.println("Player doesn't exist!");
         } catch (NotYourTurnException e) {
-            e.printStackTrace();
+            System.out.println("Not your turn. Ask who is next and play that players card.");
         } catch (CategoryDoesNotExistException e) {
-            e.printStackTrace();
+            System.out.println("This Category does not exist! Type in the correct value.");
         } catch (DrawException e) {
-            e.printStackTrace();
+            System.out.println("DRAW! Cards are saved. Take a new Card and compare the values. The winner of the next Round will get all the Cards of the played rounds. ");
         }
 
     }
