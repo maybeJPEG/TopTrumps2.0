@@ -120,7 +120,7 @@ public class TopTrumpsUI {
                     case CARD:
                         this.getFirstCard(parameterString); break;
                     case COMPARE:
-                        this.compareCategory(parameterString, parameterString); break;
+                        this.compareCategory(parameterString); break;
                     case EXIT:
                         this.exitGame("all");
                         again = false; break; // end loop
@@ -201,8 +201,8 @@ public class TopTrumpsUI {
             System.out.println("Please enter Player Number. Correct input: 'Card 1' or 'Card 2'");
         }
     }
-    public void compareCategory(String Value, String Player){
-        StringTokenizer st = new StringTokenizer(Value, Player);
+    public void compareCategory(String Parameterstring){
+        StringTokenizer st = new StringTokenizer(Parameterstring);
         try {
             String stringValue = st.nextToken();
             String stringPlayer = st.nextToken();
