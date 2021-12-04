@@ -55,11 +55,13 @@ public class TopTrumpsUI {
         b.append(".. will tell you who's turn it is.");
         b.append("\n");
         b.append(CARD);
-        b.append(".. will show your first Card of the deck. Type in Card 1 to see Alice's Card or Card 2 if you want to see Bob's Card.");
+        b.append(" <PlayerID> ( ID Alice = 1, ID Bob = 2 ) .. will show your first Card of the deck. Type in Card 1 to see Alice's Card or Card 2 if you want to see Bob's Card.");
         b.append("\n");
         b.append(COMPARE);
-        b.append(".. choose your Value and compare it to your opponent.");
+        b.append(" <PlayerID> <Category (1,2,3,4)>.. choose your Value and compare it to your opponent. Format example: 'compare 2 1'");
         b.append("\n");
+        b.append("\n");
+        b.append("Always start by typing in the command 'decks' in order to shuffle the deck and distribute the cards to each player.");
 
 
         this.standardOut.println(b);
@@ -173,10 +175,6 @@ public class TopTrumpsUI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-      /* catch (NotExistentPlayerException e) {
-            e.printStackTrace();
-            System.out.println("Exit the Game and restart. No Player could be determined.");
-        }*/
     }
 
     private void getFirstCard(String Player) throws StatusException, NotExistentPlayerException {
@@ -187,6 +185,9 @@ public class TopTrumpsUI {
 
             int playerNumber = Integer.parseInt(playerString);
             int[] cardCategories = this.tt.getFirstCard(playerNumber);
+            if (playerNumber != this.tt.getActive_Player()){
+                throw new NotYourTurnException();
+            }
             if(playerNumber == 1)
                 System.out.println("Alice's card: first value: " + cardCategories[0] + ", second value: "+ cardCategories[1]+", third value: "+cardCategories[2]+", forth value: "+cardCategories[3]);
             if(playerNumber == 2)
@@ -199,6 +200,8 @@ public class TopTrumpsUI {
             System.out.println("Player doesn't exist!");
         } catch (NoSuchElementException e){
             System.out.println("Please enter Player Number. Correct input: 'Card 1' or 'Card 2'");
+        } catch (NotYourTurnException e) {
+            System.out.println("You can only ask to see the Card of the Player who's turn it is.");
         }
     }
     public void compareCategory(String Parameterstring){
