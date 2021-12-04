@@ -76,8 +76,7 @@ public class TopTrumpsImpl implements TopTrumps {
         else {
             validateActualPlayer(player);
             validateCategory(category);
-            compareCards(category);
-            return 0;
+            return compareCards(category);
         }
     }
 
@@ -100,17 +99,17 @@ public class TopTrumpsImpl implements TopTrumps {
         if(this.first_player.getActual_card().getCategory(category) > this.second_player.getActual_card().getCategory(category)){
             for(int i = 0; i < activeCards.size(); i++ ){
                 this.first_player.getCards().add(activeCards.get(i));
-                activeCards.remove(i);
             }
-            first_player = active_player;
+            activeCards.clear();
+            active_player = first_player;
             return 1;
         }
         if(this.second_player.getActual_card().getCategory(category) > this.first_player.getActual_card().getCategory(category)){
             for(int j = 0; j < activeCards.size(); j++){
                 this.second_player.getCards().add(activeCards.get(j));
-                activeCards.remove(j);
             }
-            second_player = active_player;
+            activeCards.clear();
+            active_player = second_player;
             return 2;
         }
         //TODO
@@ -121,25 +120,26 @@ public class TopTrumpsImpl implements TopTrumps {
         }
         return 0;
     }
+
     private void addActiveCards(){
-        deleteActualCardFromPlayersCards();
         updateActualCard();
         placeActualCardInActiveCards();
-    }
-
-    private void deleteActualCardFromPlayersCards() {
-        this.first_player.getCards().remove(0);
-        this.second_player.getCards().remove(0);
+        deleteActualCardFromPlayersCards();
     }
 
     private void updateActualCard(){
-        this.actual_card = this.first_player.getCards().get(0);
-        this.actual_card = this.second_player.getCards().get(0);
+        this.first_player.setActualCard(this.first_player.getCards().get(0));
+        this.second_player.setActualCard(this.second_player.getCards().get(0));
     }
 
     private void placeActualCardInActiveCards() {
         activeCards.add(this.first_player.getActual_card());
         activeCards.add(this.second_player.getActual_card());
+    }
+
+    private void deleteActualCardFromPlayersCards() {
+        this.first_player.getCards().remove(0);
+        this.second_player.getCards().remove(0);
     }
 
 

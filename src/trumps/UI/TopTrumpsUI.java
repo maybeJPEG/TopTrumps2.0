@@ -212,7 +212,10 @@ public class TopTrumpsUI {
             int winner = this.tt.compareCategory(Category, playerNumber);
             if(winner == 1){
                 System.out.println("Alice won! You are next. Draw a card and choose the next Value you want to play.");
-            } else System.out.println("Bob won! You are next. Draw a card and choose the next Value you want to play.");
+            }
+            if(winner == 2){
+                System.out.println("Bob won! You are next. Draw a card and choose the next Value you want to play.");
+            }
         } catch (StatusException e) {
             e.printStackTrace();
         } catch (NotExistentPlayerException e) {

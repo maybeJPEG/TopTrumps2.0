@@ -38,4 +38,7 @@ public class Player {
         return this.actual_card;
     }
 
+    public void setActualCard(Card card){
+        this.actual_card = card;
+    }
 }
