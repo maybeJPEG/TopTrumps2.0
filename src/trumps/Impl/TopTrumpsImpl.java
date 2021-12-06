@@ -2,11 +2,12 @@ package trumps.Impl;
 
 import trumps.*;
 import trumps.Exceptions.*;
+import trumps.tcp.TCPStream;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class TopTrumpsImpl implements TopTrumps {
+public abstract class TopTrumpsImpl implements TopTrumps {
 
     public Player first_player;
     public Player second_player;
@@ -156,5 +157,7 @@ public class TopTrumpsImpl implements TopTrumps {
             else return 2;
         }
     }
+
+    public abstract void streamCreated(TCPStream channel);
 }
 

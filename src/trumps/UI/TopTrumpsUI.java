@@ -2,6 +2,7 @@ package trumps.UI;
 
 import trumps.Exceptions.*;
 import trumps.Impl.TopTrumpsImpl;
+import trumps.TopTrumps;
 
 import java.io.*;
 import java.util.*;
@@ -17,26 +18,43 @@ public class TopTrumpsUI {
     private PrintStream standardError = System.err;
 
     private BufferedReader userInput;
-    private TopTrumpsImpl tt;
+    private final TopTrumps tt;
 
-    public TopTrumpsImpl getTopTrumps() throws NotExistentValueException, NoCardsException {
-        return new TopTrumpsImpl();
-    }
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoCardsException, NotExistentValueException {
         PrintStream os = System.out;
 
         os.println("TopTrumps, the Virtual Luck Version. Starting now...");
-        TopTrumpsUI userCmd = new TopTrumpsUI(os, System.in);
+        TopTrumpsUI userCmd = new TopTrumpsUI(os, System.in, new TopTrumpsImpl());
+//TODO    TCPStream tcpStream;
+/*        if(args.length > 0) {
+            System.out.println("init as TCP client");
+            tcpStream = new TCPStream(PORTNUMBER, false, "Client", distributedApp);
+        } else {
+            System.out.println("init as TCP server");
+            tcpStream = new TCPStream(PORTNUMBER, true, "Server", distributedApp);
+        }
+
+        // try to establish connection
+        tcpStream.start();*/
 
         userCmd.printUsage();
         userCmd.runCommandLoop();
+/*
+        // command loop ended - kill it under all circumstances
+        tcpStream.kill();
+
+        System.out.println("connection closed");*/
     }
 
-    public TopTrumpsUI(PrintStream os, InputStream is) throws IOException {
+    private TopTrumpsUI(TopTrumps tt) {
+        this.tt = tt;
+    }
+
+    public TopTrumpsUI(PrintStream os, InputStream is, TopTrumps tt) throws IOException {
         this.standardOut = os;
         this.userInput = is != null ? new BufferedReader(new InputStreamReader(is)) : null;
 
+        this.tt = tt;
     }
     public void printUsage() {
         StringBuilder b = new StringBuilder();
@@ -159,7 +177,6 @@ public class TopTrumpsUI {
 
 
     private void distributingCards() throws StatusException, GameExceptions, WrongNameException, NotExistentPlayerException, StartNotAllowedException, NoCardsException, NotExistentValueException {
-        this.tt = new TopTrumpsImpl();
         tt.start();
     }
 
@@ -202,6 +219,10 @@ public class TopTrumpsUI {
             System.out.println("Please enter Player Number. Correct input: 'Card 1' or 'Card 2'");
         } catch (NotYourTurnException e) {
             System.out.println("You can only ask to see the Card of the Player who's turn it is.");
+        } catch (GameExceptions gameExceptions) {
+            gameExceptions.printStackTrace();
+        } catch (MatchException e) {
+            e.printStackTrace();
         }
     }
     public void compareCategory(String Parameterstring){
@@ -229,6 +250,8 @@ public class TopTrumpsUI {
             System.out.println("This Category does not exist! Type in the correct value.");
         } catch (DrawException e) {
             System.out.println("DRAW! Cards are saved. Take a new Card and compare the values. The winner of the next Round will get all the Cards of the played rounds. ");
+        } catch (GameExceptions gameExceptions) {
+            gameExceptions.printStackTrace();
         }
 
     }
