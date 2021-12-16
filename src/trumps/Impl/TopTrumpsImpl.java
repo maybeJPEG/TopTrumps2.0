@@ -4,6 +4,7 @@ import trumps.*;
 import trumps.Exceptions.*;
 import trumps.tcp.TCPStream;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -46,7 +47,7 @@ public abstract class TopTrumpsImpl implements TopTrumps {
     }
 
     @Override
-    public int[] getFirstCard(int player) throws StatusException, NotExistentPlayerException {
+    public int[] getFirstCard(int player) throws StatusException, NotExistentPlayerException, IOException {
         if(active_player == null) {
             throw new StatusException("First call method start(), no Players determined yet!");
         }
@@ -70,7 +71,7 @@ public abstract class TopTrumpsImpl implements TopTrumps {
     }
 
     @Override
-    public int compareCategory(int category, int player) throws StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException {
+    public int compareCategory(int category, int player) throws StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException, IOException {
         if(active_player == null) {
             throw new StatusException("First call method start(), no Players determined yet!");
         }
@@ -158,6 +159,5 @@ public abstract class TopTrumpsImpl implements TopTrumps {
         }
     }
 
-    public abstract void streamCreated(TCPStream channel);
 }
 

@@ -3,6 +3,7 @@ package trumps;
 import trumps.Exceptions.*;
 import trumps.Impl.TopTrumpsImpl;
 
+import java.io.IOException;
 import java.util.spi.ToolProvider;
 
 /**
@@ -44,7 +45,7 @@ public interface TopTrumps {
      * @throws MatchException if one Player has no more cards in their deck
      * @throws NotYourTurnException if players that is not active_player tries to take a Card
      */
-    int[] getFirstCard(int player) throws GameExceptions, StatusException, MatchException, NotYourTurnException, NotExistentPlayerException;
+    int[] getFirstCard(int player) throws GameExceptions, StatusException, MatchException, NotYourTurnException, NotExistentPlayerException, IOException;
 
     /**
      * the active_player picks a Category from their Card. The Category will be compared to the same Category
@@ -63,7 +64,7 @@ public interface TopTrumps {
      * @throws CategoryDoesNotExistException, if the chosen Category does ot exist. For Example Player
      *          puts the wrong number down in the category field (i.e. Numbers > 4 )
      */
-    int compareCategory(int category, int player) throws GameExceptions, StatusException, CategoryDoesNotExistException, NotExistentPlayerException, NotYourTurnException, DrawException;
+    int compareCategory(int category, int player) throws GameExceptions, StatusException, CategoryDoesNotExistException, NotExistentPlayerException, NotYourTurnException, DrawException, IOException;
 
     /**
      *  In Case one Player decides to give up all their Cards will be added at the end of the other players

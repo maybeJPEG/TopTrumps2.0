@@ -1,9 +1,8 @@
-package trumps.UI;
+package trumps;
 
 import trumps.Exceptions.*;
 import trumps.Impl.TopTrumpsImpl;
-import trumps.TopTrumps;
-
+import trumps.tcp.*;
 import java.io.*;
 import java.util.*;
 
@@ -17,34 +16,38 @@ public class TopTrumpsUI {
     private PrintStream standardOut = System.out;
     private PrintStream standardError = System.err;
 
+    public static final int PORTNUMBER = 7777;
+
     private BufferedReader userInput;
-    private final TopTrumps tt;
+
 
     public static void main(String[] args) throws IOException, NoCardsException, NotExistentValueException {
         PrintStream os = System.out;
 
         os.println("TopTrumps, the Virtual Luck Version. Starting now...");
         TopTrumpsUI userCmd = new TopTrumpsUI(os, System.in, new TopTrumpsImpl());
-//TODO    TCPStream tcpStream;
-/*        if(args.length > 0) {
+        TCPStream tcpStream;
+        if(args.length > 0) {
             System.out.println("init as TCP client");
-            tcpStream = new TCPStream(PORTNUMBER, false, "Client", distributedApp);
+            tcpStream = new TCPStream(PORTNUMBER, false, "Client", userCmd);
         } else {
             System.out.println("init as TCP server");
-            tcpStream = new TCPStream(PORTNUMBER, true, "Server", distributedApp);
+            tcpStream = new TCPStream(PORTNUMBER, true, "Server", userCmd);
         }
 
         // try to establish connection
-        tcpStream.start();*/
+        tcpStream.start();
 
         userCmd.printUsage();
         userCmd.runCommandLoop();
-/*
+
         // command loop ended - kill it under all circumstances
         tcpStream.kill();
 
-        System.out.println("connection closed");*/
+        System.out.println("connection closed");
     }
+
+    private final TopTrumps tt;
 
     private TopTrumpsUI(TopTrumps tt) {
         this.tt = tt;
@@ -223,6 +226,8 @@ public class TopTrumpsUI {
             gameExceptions.printStackTrace();
         } catch (MatchException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     public void compareCategory(String Parameterstring){
@@ -252,6 +257,8 @@ public class TopTrumpsUI {
             System.out.println("DRAW! Cards are saved. Take a new Card and compare the values. The winner of the next Round will get all the Cards of the played rounds. ");
         } catch (GameExceptions gameExceptions) {
             gameExceptions.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }

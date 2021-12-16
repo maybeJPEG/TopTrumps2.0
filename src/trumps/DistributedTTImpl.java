@@ -2,7 +2,7 @@ package trumps;
 
 import trumps.Exceptions.*;
 import trumps.Impl.TopTrumpsImpl;
-import trumps.tcp.TCPStream;
+import trumps.tcp.*;
 
 import java.io.*;
 
@@ -11,6 +11,7 @@ public class DistributedTTImpl extends TopTrumpsImpl
         {
 
             private static final byte CMD_FIRSTCARD = 1;
+            private static final byte CMD_COMPARECATEGORY = 2;
             private InputStream is;
             private OutputStream os;
 
@@ -22,13 +23,13 @@ public class DistributedTTImpl extends TopTrumpsImpl
             }
 
             @Override
-            public int[] getFirstCard(int player) throws StatusException, NotExistentPlayerException {
+            public int[] getFirstCard(int player) throws StatusException, NotExistentPlayerException, IOException {
                 return this.getFirstCard(player, true);
             }
 
             @Override
-            public int compareCategory(int category, int player) throws StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException {
-                return super.compareCategory(category, player, true);
+            public int compareCategory(int category, int player) throws StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException, IOException {
+                return this.compareCategory(category, player, true);
             }
 
             @Override
@@ -84,5 +85,21 @@ public class DistributedTTImpl extends TopTrumpsImpl
                     }
                 }
                 return retVal;
+            }
+
+            private int compareCategory(int category, int player, boolean localCall) throws IOException, StatusException, NotExistentPlayerException, NotYourTurnException, CategoryDoesNotExistException, DrawException  {
+                int retPlayer = 0;
+                if (this.connected()) {
+                    retPlayer = super.compareCategory(category, player);
+                    if (localCall) {
+                        DataOutputStream daos = new DataOutputStream(os);
+                        try {
+                            daos.write(CMD_COMPARECATEGORY);
+                            daos.writeInt(category);
+                            daos.writeInt(player);
+                        } catch (IOException e) {e.printStackTrace();}
+                    }
+                }
+                return retPlayer;
             }
         }
