@@ -6,9 +6,7 @@ import trumps.tcp.*;
 
 import java.io.*;
 
-public class DistributedTTImpl extends TopTrumpsImpl
-//        implements TCPStreamCreatedListener, ReadThreadListener
-        {
+public class DistributedTTImpl extends TopTrumpsImpl implements ReadThreadListener, TCPCreatedListener {
 
             private static final byte CMD_FIRSTCARD = 1;
             private static final byte CMD_COMPARECATEGORY = 2;
@@ -40,7 +38,7 @@ public class DistributedTTImpl extends TopTrumpsImpl
                         this.os = channel.getOutputStream();
                     }
                     // run ReadThread
-                    new ReadThread(this.is, this).start();
+                    new ReadThread(this.is, this).run();
                 } catch (IOException e) {
                     System.err.println("fatal: " + e.getLocalizedMessage());
                     System.exit(1);
@@ -101,5 +99,15 @@ public class DistributedTTImpl extends TopTrumpsImpl
                     }
                 }
                 return retPlayer;
+            }
+
+            @Override
+            public void recognizedMessage(byte message) {
+
+            }
+
+            @Override
+            public void connectionClosed() {
+
             }
         }

@@ -25,21 +25,20 @@ public class TopTrumpsUI {
         PrintStream os = System.out;
 
         os.println("TopTrumps, the Virtual Luck Version. Starting now...");
-        TopTrumpsUI userCmd = new TopTrumpsUI(os, System.in, new TopTrumpsImpl());
+        DistributedTTImpl distrApp = new DistributedTTImpl();
         TCPStream tcpStream;
         if(args.length > 0) {
             System.out.println("init as TCP client");
-            tcpStream = new TCPStream(PORTNUMBER, false, "Client", userCmd);
+            tcpStream = new TCPStream(PORTNUMBER, false, "Client", distrApp);
         } else {
             System.out.println("init as TCP server");
-            tcpStream = new TCPStream(PORTNUMBER, true, "Server", userCmd);
+            tcpStream = new TCPStream(PORTNUMBER, true, "Server", distrApp);
         }
 
         // try to establish connection
         tcpStream.start();
 
-        userCmd.printUsage();
-        userCmd.runCommandLoop();
+        new TopTrumpsUI(distrApp).runCommandLoop();
 
         // command loop ended - kill it under all circumstances
         tcpStream.kill();
@@ -59,6 +58,7 @@ public class TopTrumpsUI {
 
         this.tt = tt;
     }
+
     public void printUsage() {
         StringBuilder b = new StringBuilder();
 
