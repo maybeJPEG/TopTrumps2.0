@@ -8,8 +8,9 @@ import java.io.*;
 
 public class DistributedTTImpl extends TopTrumpsImpl implements ReadThreadListener, TCPCreatedListener {
 
-            private static final byte CMD_FIRSTCARD = 1;
-            private static final byte CMD_COMPARECATEGORY = 2;
+            private static final byte CMD_START = 10;
+            private static final byte CMD_FIRSTCARD = 11;
+            private static final byte CMD_COMPARECATEGORY = 12;
             private InputStream is;
             private OutputStream os;
 
@@ -63,7 +64,8 @@ public class DistributedTTImpl extends TopTrumpsImpl implements ReadThreadListen
                     if (localCall) {
                         DataOutputStream daos = new DataOutputStream(os);
                         try {
-                            daos.writeBytes("Game started");
+                            daos.write(CMD_START);
+                            daos.writeInt(player);
                         } catch (IOException e) {e.printStackTrace();}
                     }
                 }
@@ -102,12 +104,29 @@ public class DistributedTTImpl extends TopTrumpsImpl implements ReadThreadListen
             }
 
             @Override
-            public void recognizedMessage(byte message) {
+            public void recognizedMessage(byte message) throws NotExistentPlayerException, StartNotAllowedException, StatusException, IOException {
+                switch(message){
+                    case CMD_START -> {
+                        this.start(false);
+ //TODO                       System.out.println("Game has started. It's Player, with PlayerID "" turn.");
+                        break;
+                    }
+                    case CMD_FIRSTCARD -> {
+                        this.getFirstCard(getActive_Player(), false);
+                        System.out.println("First Card has been drawn");
+                        break;
+                    }
+                    case CMD_COMPARECATEGORY -> {
+//TODO                        this.compareCategory(?)
+                        System.out.println("Comparing Category's.");
+                        break;
+                    }
+                }
 
             }
 
             @Override
             public void connectionClosed() {
-
+                this.is = null; this.os = null;
             }
         }
