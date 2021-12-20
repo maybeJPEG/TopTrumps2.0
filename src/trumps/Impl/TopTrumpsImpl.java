@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class TopTrumpsImpl implements TopTrumps {
+public class TopTrumpsImpl implements TopTrumps {
 
     public Player first_player;
     public Player second_player;

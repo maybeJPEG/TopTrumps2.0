@@ -1,5 +1,9 @@
 package trumps;
 
+import trumps.Exceptions.NotExistentPlayerException;
+import trumps.Exceptions.StartNotAllowedException;
+import trumps.Exceptions.StatusException;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,7 +22,7 @@ public class ReadThread {
                 byte messageByte = (byte) readInt; // remove first bytes
                 this.listener.recognizedMessage(messageByte);
             }
-        } catch (IOException e) {
+        } catch (IOException | NotExistentPlayerException | StartNotAllowedException | StatusException e) {
             System.err.println("connection broken: " + e.getLocalizedMessage());
             this.listener.connectionClosed();
         }
